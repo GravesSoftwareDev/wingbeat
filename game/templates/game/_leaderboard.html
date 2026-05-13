@@ -1,0 +1,7 @@
+<h2>Top Scores</h2>
+<ol>
+    {% for entry in top_scores%}
+        <li>{{ entry.player_initials }}: {{ entry.score }}</li>
+    {% empty%}
+        <li>No scores yet. Be the first to play!</li>
+    {% endfor %}

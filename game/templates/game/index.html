@@ -1,0 +1,13 @@
+{% extends "game/base.html" %}
+
+{% block content %}
+<main>
+    <h1>WingBeat</h1>
+
+    <canvas id="game" width="480" height="640"></canvas>
+
+    <section id="leaderboard">
+        {% include "game/_leaderboard.html" %}
+    </section>
+</main>
+{% endblock content %}
