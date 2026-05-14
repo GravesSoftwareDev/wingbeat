@@ -21,7 +21,7 @@ def leaderboard(request):
 def submit_score(request):
     """HTMX endpoint: accept a score, return updated leaderboard fragment."""
     #TODO: validation/anit-cheat
-    name = request.POST.get('player_initials').strip()[:20]
+    name = (request.POST.get('player_initials') or '').strip()[:3].upper()
     raw_score = request.POST.get('score','0')
 
     try:
@@ -30,7 +30,7 @@ def submit_score(request):
         score_value = 0
 
     if name and 0 <= score_value <=100_000:
-        Score.objects.create(player_name=name, score=score_value)
+        Score.objects.create(player_initials=name, score=score_value)
 
     return render(request, 'game/_leaderboard.html',{
         'top_scores': Score.objects.all()[:LEADERBOARD_LIMIT],

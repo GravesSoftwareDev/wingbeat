@@ -1,13 +1,52 @@
 {% extends "game/base.html" %}
+{% load static %}
 
 {% block content %}
 <main>
     <h1>WingBeat</h1>
 
-    <canvas id="game" width="480" height="640"></canvas>
+    <div class="game-wrap">
+        <div id="game-container">
+            <!-- The p5 canvas will be injected here -->
+            <div id="score-submit-overlay" hidden>
+                <p>You scored <strong id="final-score">0</strong>!</p>
+                <p class="initials-label">Enter your initials</p>
+                <div class="initials-display">
+                    <div class="slot-wrapper">
+                        <button class="slot-arrow up" tabindex="-1">▲</button>
+                        <div class="initial-slot active" data-index="0">A</div>
+                        <button class="slot-arrow down" tabindex="-1">▼</button>
+                    </div>
+                    <div class="slot-wrapper">
+                        <button class="slot-arrow up" tabindex="-1">▲</button>
+                        <div class="initial-slot" data-index="1">A</div>
+                        <button class="slot-arrow down" tabindex="-1">▼</button>
+                    </div>
+                    <div class="slot-wrapper">
+                        <button class="slot-arrow up" tabindex="-1">▲</button>
+                        <div class="initial-slot" data-index="2">A</div>
+                        <button class="slot-arrow down" tabindex="-1">▼</button>
+                    </div>
+                </div>
+                <p class="initials-hint">↑↓ change · ←→ move · type a letter</p>
+                <form id="score-form" method="post" action="{% url 'game:submit_score' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="score" id="score-input" value="0">
+                    <input type="hidden" name="player_initials" id="player-initials-hidden" value="AAA">
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <section id="leaderboard">
         {% include "game/_leaderboard.html" %}
     </section>
 </main>
 {% endblock content %}
+
+{% block scripts %}
+    <script type = "module" src="{% static 'game/js/main.js' %}">
+
+    </script>
+{% endblock scripts %}

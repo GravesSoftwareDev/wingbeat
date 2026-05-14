@@ -1,0 +1,171 @@
+/* Basic styling for the game canvas. */
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #0a0612;
+  color: #eee;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+#game {
+  display: block;
+  border: 1px solid #333;
+  background: #1a1428;
+  /* Crisper pixels if you go sprite-art later */
+  image-rendering: pixelated;
+}
+
+.game-wrap {
+  position: relative;
+}
+
+#game-container {
+  position: relative;
+}
+
+#score-submit-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 6, 18, 0.85);
+  color: #eee;
+  gap: 12px;
+  padding: 24px;
+  text-align: center;
+}
+
+#score-submit-overlay[hidden] {
+  display: none;
+}
+
+#score-submit-overlay p {
+  margin: 0;
+  font-size: 1.2em;
+}
+
+#score-submit-overlay form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 240px;
+}
+
+#score-submit-overlay input[type="text"] {
+  padding: 6px 10px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #1a1428;
+  color: #eee;
+  font-size: 1em;
+}
+
+.initials-label {
+  margin: 0;
+  font-size: 0.9em;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.initials-hint {
+  margin: 0;
+  font-size: 0.75em;
+  color: #666;
+}
+
+.initials-display {
+  display: flex;
+  gap: 12px;
+}
+
+.slot-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.initial-slot {
+  width: 52px;
+  height: 68px;
+  border: 2px solid #444;
+  border-radius: 6px;
+  background: #0d0a1a;
+  color: #aaa;
+  font-size: 2.2em;
+  font-weight: bold;
+  font-family: monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.1s, color 0.1s;
+}
+
+.initial-slot.active {
+  border-color: #9000ff;
+  color: #fff;
+  box-shadow: 0 0 10px #9000ff66;
+}
+
+.slot-arrow {
+  background: none;
+  border: none;
+  color: #444;
+  font-size: 1em;
+  cursor: pointer;
+  padding: 0 8px;
+  line-height: 1;
+  transition: color 0.1s;
+}
+
+.slot-arrow.active {
+  color: #9000ff;
+}
+
+.slot-arrow:hover {
+  color: #ccc;
+}
+
+#score-submit-overlay button[type="submit"] {
+  padding: 8px 24px;
+  background: #6200b3;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1em;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+#score-submit-overlay button[type="submit"]:hover {
+  background: #7a00e0;
+}
+
+#leaderboard {
+  min-width: 320px;
+}
+
+#leaderboard h2 {
+  margin: 0 0 8px;
+  font-size: 1.1em;
+}
+
+#leaderboard ol {
+  padding-left: 24px;
+  margin: 0;
+}
