@@ -51,6 +51,23 @@ main {
   display: none;
 }
 
+#close-overlay {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 1.4em;
+  line-height: 1;
+  padding: 4px 6px;
+  cursor: pointer;
+}
+
+#close-overlay:hover {
+  color: #eee;
+}
+
 #score-submit-overlay p {
   margin: 0;
   font-size: 1.2em;

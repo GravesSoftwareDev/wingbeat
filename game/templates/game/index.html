@@ -6,9 +6,12 @@
     <h1>WingBeat</h1>
 
     <div class="game-wrap">
-        <div id="game-container">
-            <!-- The p5 canvas will be injected here -->
+        <div id="game-container"
+             data-bat-sprite="{% static 'sprites/batFlap.png' %}"
+             data-dead-bat-sprite="{% static 'sprites/deadBat.png' %}">
+            <!-- Canvas is injected here by main.js -->
             <div id="score-submit-overlay" hidden>
+                <button id="close-overlay" aria-label="Close">&#x2715;</button>
                 <p>You scored <strong id="final-score">0</strong>!</p>
                 <p class="initials-label">Enter your initials</p>
                 <div class="initials-display">

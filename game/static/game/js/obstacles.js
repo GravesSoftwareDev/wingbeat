@@ -2,17 +2,17 @@
 // Obstacle.js
 export const OBSTACLE_CONFIG = {
     width: 60,
-    gapHeight: 320,         // starting gap size (px)
+    gapHeight: 280,         // starting gap size (px)
     gapDeceleration: 8,     // gap shrink per second
-    minGapHeight: 140,
+    minGapHeight: 180,
     spawnDistance: 450,     // starting gap between obstacles (px)
     spawnDeceleration: 7,   // distance decrease per second
     minSpawnDistance: 250,
     scrollSpeed: 180,       // starting speed (px/s)
     scrollAcceleration: 6,  // speed increase per second
     maxScrollSpeed: 420,
-    minGapY: 100,
-    minGapBottom: 100,
+    minGapY: 80,
+    minGapBottom: 80,
 };
 
 export function createObstacles(canvasWidth, canvasHeight) {
@@ -71,15 +71,16 @@ export function updateObstacles(obstacles, dt, canvasWidth, canvasHeight, scroll
     return { scrollSpeed, spawnDistance, gapHeight };
 }
 
-// Circle-vs-rect collision. Returns true if bat (circle) touches any obstacle.
-export function checkObstacleCollision(bat, obstacles, batRadius, canvasHeight) {
+// Capsule-vs-rect collision. Returns true if the capsule touches the rect.
+export function checkObstacleCollision(capsule, obstacles, canvasHeight) {
+    const { ax, ay, bx, by, r } = capsule;
     const { width } = OBSTACLE_CONFIG;
     for (const obs of obstacles) {
         const gapTop    = obs.gapY - obs.gapHeight / 2;
         const gapBottom = obs.gapY + obs.gapHeight / 2;
         if (
-            circleHitsRect(bat.x, bat.y, batRadius, obs.x, 0, width, gapTop) ||
-            circleHitsRect(bat.x, bat.y, batRadius, obs.x, gapBottom, width, canvasHeight - gapBottom)
+            capsuleHitsRect(ax, ay, bx, by, r, obs.x, 0, width, gapTop) ||
+            capsuleHitsRect(ax, ay, bx, by, r, obs.x, gapBottom, width, canvasHeight - gapBottom)
         ) {
             return true;
         }
@@ -87,37 +88,55 @@ export function checkObstacleCollision(bat, obstacles, batRadius, canvasHeight) 
     return false;
 }
 
-function circleHitsRect(cx, cy, r, rx, ry, rw, rh) {
-    // Find the closest point on the rectangle to the circle center.
-    // Then check if that point is within radius.
-    const closestX = Math.max(rx, Math.min(cx, rx + rw));
-    const closestY = Math.max(ry, Math.min(cy, ry + rh));
-    const dx = cx - closestX;
-    const dy = cy - closestY;
-    return dx * dx + dy * dy < r * r;
+function capsuleHitsRect(ax, ay, bx, by, r, rx, ry, rw, rh) {
+    const r2 = r * r;
+    const dx = bx - ax, dy = by - ay;
+    const len2 = dx * dx + dy * dy;
+
+    function dist2AtT(t) {
+        const px = ax + t * dx;
+        const py = ay + t * dy;
+        const cx = Math.max(rx, Math.min(px, rx + rw));
+        const cy = Math.max(ry, Math.min(py, ry + rh));
+        return (px - cx) ** 2 + (py - cy) ** 2;
+    }
+
+    // Candidate t values: endpoints, rect boundary crossings, and
+    // closest-point-on-segment to each rect corner (covers corner Voronoi regions).
+    const candidates = [0, 1];
+    if (len2 > 0) {
+        if (dx !== 0) { candidates.push((rx - ax) / dx, (rx + rw - ax) / dx); }
+        if (dy !== 0) { candidates.push((ry - ay) / dy, (ry + rh - ay) / dy); }
+        for (const [cx, cy] of [[rx, ry], [rx + rw, ry], [rx, ry + rh], [rx + rw, ry + rh]]) {
+            candidates.push(((cx - ax) * dx + (cy - ay) * dy) / len2);
+        }
+    }
+
+    for (const t of candidates) {
+        if (t >= 0 && t <= 1 && dist2AtT(t) <= r2) return true;
+    }
+    return false;
 }
 
-export function drawObstacles(p, obstacles, canvasHeight) {
+export function drawObstacles(ctx, obstacles, canvasHeight) {
     const { width } = OBSTACLE_CONFIG;
-    p.noStroke();
-    p.fill('#3a2a52');
+    ctx.fillStyle = '#3a2a52';
     for (const obs of obstacles) {
         const gapTop = obs.gapY - obs.gapHeight / 2;
         const gapBottom = obs.gapY + obs.gapHeight / 2;
-        p.rect(obs.x, 0, width, gapTop);
-        p.rect(obs.x, gapBottom, width, canvasHeight - gapBottom);
+        ctx.fillRect(obs.x, 0, width, gapTop);
+        ctx.fillRect(obs.x, gapBottom, width, canvasHeight - gapBottom);
     }
 }
 
-export function drawObstaclesDebug(p, obstacles, canvasHeight) {
+export function drawObstaclesDebug(ctx, obstacles, canvasHeight) {
     const { width } = OBSTACLE_CONFIG;
-    p.noFill();
-    p.stroke('#00ff00');
-    p.strokeWeight(1);
+    ctx.strokeStyle = '#00ff00';
+    ctx.lineWidth = 1;
     for (const obs of obstacles) {
         const gapTop = obs.gapY - obs.gapHeight / 2;
         const gapBottom = obs.gapY + obs.gapHeight / 2;
-        p.rect(obs.x, 0, width, gapTop);
-        p.rect(obs.x, gapBottom, width, canvasHeight - gapBottom);
+        ctx.strokeRect(obs.x, 0, width, gapTop);
+        ctx.strokeRect(obs.x, gapBottom, width, canvasHeight - gapBottom);
     }
 }
